@@ -5,6 +5,7 @@
 */
 $(function(){
   add_student();
+  add_course();
   list_course();
   list_join();
   $(".close").click(function(e){
@@ -37,7 +38,7 @@ function list_join(){
       }
       $(".table-body-1 table").append(row);
       edit_student(a);
-      delete_student(a);
+      delete_student();
     }
   });
 }
@@ -67,6 +68,7 @@ function list_course(){
         row += " </tr>";
       }
       $(".table-body-2 table").append(row);
+      delete_course();
     }
   });
 }
@@ -84,12 +86,23 @@ function edit_student(a){
   });
 
 }
-function delete_student(a){
+function delete_student(){
   $(".btn-2").click(function(e){
     e.preventDefault();
     //console.log(a);
     var stud_id = $(this).closest('tr').find('td:nth-child(1)').text();
     modal(stud_id , 3);
+  });
+
+}
+function delete_course(){
+  $(".btn-4").click(function(e){
+    e.preventDefault();
+    //console.log(a);
+    var c_id = $(this).closest('tr').find('td:nth-child(1)').text();
+    if(modal(c_id , 4) == true){
+      $(this).closest('tr').remove;
+    }
   });
 
 }
@@ -140,10 +153,16 @@ function add_student(){
      submit_student();
    }
    if(check == 3){
-     var content = '<div class="group">Do you want to continue?</div>'+
+     var content = '<div class="group-content">Do you want to continue?</div>'+
      '<div class="group-btn"><input type="button" id="confirm" value="Confirm" /> <input type="button" id="cancel" value="Cancel" /></div>';
      $('.modal-body').append(content);
      confirm(data, 1);
+   }
+   if(check == 4){
+     var content = '<div class="group-content">Do you want to continue?</div>'+
+     '<div class="group-btn"><input type="button" id="confirm" value="Confirm" /> <input type="button" id="cancel" value="Cancel" /></div>';
+     $('.modal-body').append(content);
+     confirm(data, 2);
    }
 
  }
@@ -275,18 +294,74 @@ function add_student(){
    });
  }
  function confirm(id , stat){
-
+   $("#cancel").click(function(){
+     $('#modal').fadeOut('2000');
+     $('.modal-body').html('');
+   });
    if(stat == 1){
     $("#confirm").click(function(){
-      alert(id);
+      $.ajax({
+        type:"POST",
+        data:{action:'delete_student', id:id},
+        url:"assets/functions.php",
+        success: function(data){
+          $('.modal-body').html('<div class="group-content">Data has been removed</div>');
+          setTimeout(function(){
+            location.reload();
+          },1000);
 
-    });
-    $("#cancel").click(function(){
-      $('#modal').fadeOut('2000');
-      $('.modal-body').html('');
+        }
+
+      });
+
     });
    }
    if(stat == 2){
+     $("#confirm").click(function(){
+       $.ajax({
+         type:"POST",
+         data:{action:'delete_course', id:id},
+         url:"assets/functions.php",
+         success: function(data){
+           $('.modal-body').html('<div class="group-content">Data has been removed</div>');
+           setTimeout(function(){
+             location.reload();
+           },1000);
 
+         }
+
+       });
+
+     });
    }
+ }
+ function add_course(){
+   $('.form .add-btn').click(function(){
+     $('.form .add-btn').prop("disabled",true);
+     var course = $('.form .add-course').val();
+     if(course.length < 10){
+       alert('Invalid input data');
+       $('.form .add-btn').prop("disabled",false);
+     }else{
+       $.ajax({
+         type:"POST",
+         data:{action:'add_course', course:course},
+         url:"assets/functions.php",
+         success:function(data){
+
+             var row = " <tr>"+
+             "      <td>"+data+"</td>"+
+             "      <td class='course'>"+course+"</td>"+
+             "      <td ><a href='#' class='btn-del btn-4'>delete</a></td>"+
+             " </tr>";
+           $(".table-body-2 table").append(row);
+           $('.form add-course').val('');
+           $('.form .add-btn').delay(1000).prop("disabled",false);
+         }
+       });
+     }
+
+
+
+   });
  }
