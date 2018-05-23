@@ -4,10 +4,12 @@
   5/21/2018
 */
 $(function(){
+
   add_student();
   add_course();
   list_course();
   list_join();
+  search();
   $(".close").click(function(e){
     e.preventDefault();
     $('#modal').fadeOut('2000');
@@ -25,7 +27,7 @@ function list_join(){
       //console.log(a);
       var row = "";
       for(var i = 0; i<a.length;i++){
-        row += " <tr>";
+        row += " <tr class='filter'>";
         row +="      <td>"+a[i].student_id+"</td>";
         row +="      <td>"+a[i].firstname+"</td>";
         row +="      <td>"+a[i].lastname+"</td>";
@@ -364,4 +366,14 @@ function add_student(){
 
 
    });
+ }
+ function search(){
+    $(document).ready(function(){
+      $("#search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(".table-body-1 table .filter").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
  }
