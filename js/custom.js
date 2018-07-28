@@ -12,7 +12,7 @@ $(function(){
   search();
   $(".close").click(function(e){
     e.preventDefault();
-    $('#modal').fadeOut('2000');
+    $('#modal').hide();
     $('.modal-body').html('');
   });
 });
@@ -297,7 +297,7 @@ function add_student(){
  }
  function confirm(id , stat){
    $("#cancel").click(function(){
-     $('#modal').fadeOut('2000');
+     $('#modal').hide();
      $('.modal-body').html('');
    });
    if(stat == 1){
